@@ -39,8 +39,10 @@ The cost of this lab series is **moderate**. For an overview of cost ratings, re
 This hands-on lab includes the following exercises:
 
 - [Exercise 1: Create an Ubuntu Data Science VM](#Exercise1)
-- [Exercise 2: Connect to the Data Science VM](#Exercise2)
-- [Exercise 3: Download a dataset and create a Jupyter notebook](#Exercise3)
+- [Exercise 2a: Connect to the Data Science VM with x2go](#Exercise2a)
+- [Exercise 2b: Connect to the Data Science VM with RDP](#Exercise2b)
+- [Exercise 3a: Download a dataset and create a Jupyter notebook in X2Go](#Exercise3a)
+- [Exercise 3b: Download a dataset and create a Jupyter notebook in Windows RDP](#Exercise3b)
 
 Estimated time to complete this lab: **20** minutes.
 
@@ -95,8 +97,8 @@ The Ubuntu Data Science Virtual Machine for Linux is a virtual-machine image tha
 
 The VM has been created. The next step is to connect to it remotely so you can work with the VM's Ubuntu desktop.
 
-<a name="Exercise2"></a>
-## Exercise 2: Connect to the Data Science VM ##
+<a name="Exercise2a"></a>
+## Exercise 2: Connect to the Data Science VM (x2go route) ##
 
 In this exercise, you will connect remotely to the Ubuntu desktop in the VM that you created in the previous exercise. To do so, you need a client that supports [Xfce](https://xfce.org/), which is a lightweight desktop environment for Linux.
 
@@ -140,8 +142,62 @@ In this exercise, you will connect remotely to the Ubuntu desktop in the VM that
 
 Now that you are connected, take a moment to explore the shortcuts on the desktop. These are shortcuts to the numerous data-science tools preinstalled in the VM, which include [Jupyter](http://jupyter.org/), [R Studio](https://www.rstudio.com/), and the [Microsoft Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/), among others.
 
-<a name="Exercise3"></a>
-## Exercise 3: Download a dataset and create a Jupyter notebook ##
+Feel free to skip ahead to exercise 3: [Exercise 3a: Download a dataset and create a Jupyter notebook in X2Go](#Exercise3a)
+
+<a name="Exercise2b"></a>
+## Exercise 2: Connect to the Data Science VM (RDP route) ##
+
+In this exercise, you will connect remotely to the Ubuntu desktop in the VM that you created in the previous exercise. 
+
+
+1. Return to the Azure Portal and the blade for the resource group containing the Data Science VM. Then click the VM.
+
+    ![Opening the Data Science VM](Images/open-data-science-vm.png)
+
+    _Opening the Data Science VM_
+
+1. Click the **Connect** button that appears in the top left
+   
+    ![Copying the VM's IP address](Images/connect-data-science-vm-1.png)
+
+    _Connecting to the VM_
+
+1. First choose to connect using SSH, we'll run some code here to set up the Ubuntu Desktop client for RDP. Copy the string under Login using VM Local Account and open up a command prompt.
+ 
+    ![Connecting with X2Go](Images/connect-data-science-vm-2.png)
+
+    _Connecting with SSH_
+
+1. Once in the command prompt paste and run the copied code. Follow all prompts until you're looking at a similar screen to the one below:
+
+    ![Starting a new session](Images/connect-data-science-vm-3.png)
+
+    _Starting a new session_
+
+1. Once logged in, enter in the following commands to finish setting up our RDP environment.
+  
+	 ```bash 
+	sudo apt-get update
+	sudo apt-get upgrade
+	sudo apt-get install ubuntu-desktop
+	sudo apt-get install xrdp
+	sudo apt-get update
+	sudo apt-get install xfce4
+	echo xfce4-session >~/.xsession
+	sudo service xrdp restart
+	```
+
+
+1. Navigate back to the Azure Portal, click connect again but this time choose the RDP tab
+
+    ![Connected!](Images/connect-data-science-vm-1.png)
+
+    _Connected!_
+
+Now that you are connected, take a moment to explore the shortcuts on the desktop. These are shortcuts to the numerous data-science tools preinstalled in the VM, which include [Jupyter](http://jupyter.org/), [R Studio](https://www.rstudio.com/), and the [Microsoft Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/), among others.
+
+<a name="Exercise3a"></a>
+## Exercise 3: Download a dataset and create a Jupyter notebook in X2Go ##
 
 In this exercise, you will import a dataset from Azure blob storage into the VM and load it into a Jupyter notebook. Jupyter is already installed in the VM and is accessible through the **Applications** menu or through the shortcut on the desktop. Jupyter notebooks are widely used in the data-science community to explore, transform, and visualize data. Notebooks are highly interactive, and since they can include executable code, they provide the perfect platform for manipulating data and building predictive models from it. 
 
@@ -165,6 +221,74 @@ In this exercise, you will import a dataset from Azure blob storage into the VM 
     ![Launching Jupyter](Images/start-jupyter.png)
 
     _Launching Jupyter_
+
+1. In the browser window that opens, click **flights** to open the "flights" directory.
+
+    ![Opening the "flights" directory](Images/open-flights-folder.png)
+
+    _Opening the "flights" directory_
+
+1. Confirm that **flightdata.csv** is present in the "flights" directory. Then click the **New** button and choose **Python 3 Spark - local** from the drop-down list to create a new Jupyter notebook with a Python 3 kernel.
+
+    ![Creating a new Jupyter notebook](Images/new-python-3.png)
+
+    _Creating a new Jupyter notebook_
+
+1. In the first cell of the notebook, enter the following Python code to load **flightdata.csv** and create a [Pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html) from it.
+
+    ```python
+    import pandas as pd
+
+    df = pd.read_csv('flightdata.csv')
+    df.head()
+    ```
+
+1. Select the **Run Cells** command from the **Cell** menu (or press **Ctrl+Enter**) to execute the Python code. Confirm that the output resembles the output below.
+
+    ![Loading the dataset](Images/first-run.png)
+
+    _Loading the dataset_
+
+	The DataFrame that you created contains on-time arrival information for a major U.S. airline. It has more than 11,000 rows and 26 columns. (The output says "5 rows" because DataFrame's [head](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.head.html) function only returns the first five rows.) Each row represents one flight and contains information such as the origin, the destination, the scheduled departure time, and whether the flight arrived on time or late. You will learn more about the data, including its content and structure, in the next lab.
+
+1. Use the **File** -> **Save and Checkpoint** command to save the notebook.
+
+1. Use the **File** -> **Rename...** command to name the notebook "FlightData."
+
+If you check the "flights" directory, you should find that it now contains a file named **FlightData.ipynb** containing the Jupyter notebook you created. You will return to this notebook in the next lab and use it to prepare the data for use in a machine-learning model.
+<a name="Exercise3b"></a>
+## Exercise 3: Download a dataset and create a Jupyter notebook in RDP ##
+
+In this exercise, you will import a dataset from Azure blob storage into the VM and load it into a Jupyter notebook. Jupyter is already installed in the VM, but is accessed slightly differently due to the newer DSVMs supporting JupyterHub . Jupyter notebooks are widely used in the data-science community to explore, transform, and visualize data. Notebooks are highly interactive, and since they can include executable code, they provide the perfect platform for manipulating data and building predictive models from it. 
+
+1. Click the Terminal icon at the bottom of the desktop to open a terminal window.
+
+    ![Opening a terminal window](Images/open-terminal.png)
+
+    _Opening a terminal window_
+
+1. Enter the following commands in the terminal window to create a "flights" subdirectory in the "notebooks" directory and download a dataset from Azure blob storage into the "flights" subdirectory:
+
+    ```bash
+    cd notebooks
+    mkdir flights
+    cd flights
+    curl https://topcs.blob.core.windows.net/public/FlightData.csv --output flightdata.csv
+    ```
+
+1. Now to access Jupyter. When the DSVM launches a tab of Firefox opens with it. Open a new tab and go to localhost port 8000:
+	```html
+	https://localhost:8000
+
+	```
+1. If you have issues or get a response from Firefox that it's not a secure site, click on the Advanced button and then the Add Exception button. Confirm the exception and proceed. 
+ 
+	![Launching Jupyter](Images/connect-data-science-vm-9.png)
+
+1. You should now see a prompt to log into your Jupyter notebook. Use the same username password combo you used to log into the Remote Desktop.
+ 
+	![Launching Jupyter](Images/connect-data-science-vm-8.png)
+
 
 1. In the browser window that opens, click **flights** to open the "flights" directory.
 
